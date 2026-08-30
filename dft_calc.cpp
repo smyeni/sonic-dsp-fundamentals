@@ -74,35 +74,38 @@ int main()
     std::ofstream outfile{"spectrum.csv"};
     outfile.imbue(std::locale::classic());
 
-    std::println(outfile, "{},{},{},{},{},{}","n", "omega", "freq", "magn_hann", "phase","magn_raw");
+    std::println(outfile, "{},{},{},{},{},{},{}","n", "omega", "freq", "magn_hann", "phase_raw", "phase_hann","magn_raw");
     double magn_raw;
     double magn_hann;
-    double phase;
+    double phase_raw;
+    double phase_hann;
 
 	//Hold tight, voodoo happening here
     for (auto [k,bin_omega] : std::views::enumerate(bin_omegas))
     {
-        //const std::complex<double> phase_nudge( std::cos(bin_delta_omega * k), -std::sin(bin_delta_omega * k) );
-        const std::complex<double> phase_reversal( std::cos(bin_omega), -std::sin(bin_omega) );
-        std::complex<double> exp_term(1, 0);
+        const std::complex<double> per_sample_phase_advance( std::cos(bin_omega), std::sin(bin_omega) );
+        std::complex<double> phase_reverser(1, 0);
         std::complex<double> X_omega_hann(0.0, 0.0);
         std::complex<double> X_omega_raw(0.0, 0.0);
 
         //Interrogate the N samples for similarity with current/each omega:
         //  Our frequency hunter throws successive phase-advanced samples back to DC by applying the 
-        //  negative of their accumulated digital frequency phase advance. If they all land aligned, 
+        //  negative of their accumulated phase advance. If they all land aligned, 
         //  the hunter has found the signal's frequency.
 
         for (auto [n, sample] : std::views::enumerate(x_windowed)) 
         {
-            X_omega_raw  += x[n] * exp_term;
-            X_omega_hann += x_windowed[n] * exp_term;
-            exp_term     *= phase_reversal;
+            X_omega_raw  += x[n] * phase_reverser;          //phase throw-back (rect window)
+            X_omega_hann += x_windowed[n] * phase_reverser; //phase throw-back (Hann window)
+
+            //Prep an even more aggressive cumulative phase throw back for next sample
+            phase_reverser *= std::conj( per_sample_phase_advance );
         }
 
         magn_hann = std::abs(X_omega_hann);
         magn_raw = std::abs(X_omega_raw);
-        phase = std::arg(X_omega_hann);
-        std::println(outfile, "{},{:.6e},{},{:.6e},{:.6e},{:.6e}",k, bin_omega, k*bin_hz, magn_hann, phase, magn_raw);
+        phase_hann = std::arg(X_omega_hann);
+        phase_raw = std::arg(X_omega_raw);
+        std::println(outfile, "{},{:.6e},{},{:.6e},{:.6e},{:.6e},{:.6e}",k, bin_omega, k*bin_hz, magn_hann, phase_raw, phase_hann, magn_raw);
     }
 }
