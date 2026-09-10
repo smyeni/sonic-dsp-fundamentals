@@ -83,7 +83,7 @@ int main()
 	//Hold tight, voodoo happening here
     for (auto [k,bin_omega] : std::views::enumerate(bin_omegas))
     {
-        const std::complex<double> per_sample_phase_advance( std::cos(bin_omega), std::sin(bin_omega) );
+        const std::complex<double> inter_sample_phase_advance( std::cos(bin_omega), std::sin(bin_omega) );
         std::complex<double> phase_reverser(1, 0);
         std::complex<double> X_omega_hann(0.0, 0.0);
         std::complex<double> X_omega_raw(0.0, 0.0);
@@ -99,7 +99,7 @@ int main()
             X_omega_hann += x_windowed[n] * phase_reverser; //phase throw-back (Hann window)
 
             //Prep an even more aggressive cumulative phase throw back for next sample
-            phase_reverser *= std::conj( per_sample_phase_advance );
+            phase_reverser *= std::conj( inter_sample_phase_advance );
         }
 
         magn_hann = std::abs(X_omega_hann);
