@@ -1,4 +1,18 @@
-a.out
-plot_xn
-.venv/
+# build
+build/
+*.o
+*.a
+*.so
+main
+[STRIPPED 140 bytes]
+# data
+*.png
+*.csv
+*.wav
+!hanning.png
+!windowed_sinusoid.png
+# env
 __pycache__/
+.venv/
+.vscode/
+errors.txt
