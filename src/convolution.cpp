@@ -1,4 +1,4 @@
-#include <print>
+//#include <print>
 #include <vector>
 #include "convolution.h"
 
@@ -15,17 +15,17 @@ std::vector<double>  sonic::convolve( std::vector<double> x, std::vector<double>
             //n - k < 0 ??
             if ( n < k ) 
             {
-                std::println( "n={} -> xn = -ve, hn={} => REJECT!", n,k );
+                //std::println( "n={} -> xn = -ve, hn={} => REJECT!", n,k );
                 break;
             }
 
             if ( (n-k) < x.size() )
             {
-                std::println( "n={} -> xn={}, hn={}", n,n-k,k );
+                //std::println( "n={} -> xn={}, hn={}", n,n-k,k );
                 y[n] += h[k] * x[n-k]; 
             }
             else {
-                std::println( "n={} -> xn={}, hn={} => REJECT!", n,n-k,k );
+                //std::println( "n={} -> xn={}, hn={} => REJECT!", n,n-k,k );
             }
         }
     }
