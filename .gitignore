@@ -1,16 +1,31 @@
-# build
+# build artifacts - matches anywhere
 build/
 *.o
 *.a
 *.so
-main
-[STRIPPED 140 bytes]
-# data
+a.out
+**/main
+**/test_convolution
+**/convolve
+**/dft_calc
+**/dtft_calc
+**/dtft_benchmarks
+**/calc_dtft
+**/idft
+**/idft_N
+**/signal_generate
+**/windowed_hann_dtft
+**/dsp_generate
+**/tones3
+**/plot_xn
+
+# generated data - ignore all, but keep 2 reference images
 *.png
 *.csv
 *.wav
 !hanning.png
 !windowed_sinusoid.png
+
 # env
 __pycache__/
 .venv/
