@@ -7,9 +7,9 @@ from datetime import datetime as dt
  
 df = pd.read_csv("h.csv", skipinitialspace=True)
  
-fig, (ax_hamming, ax_imp_resp, ax_freq_resp) = plt.subplots(3, 1, figsize=(14, 5))
+fig, (ax_hamming, ax_h, ax_H) = plt.subplots(3, 1, figsize=(14, 5))
 
-df_hamming = pd.read_csv("h_windowed.csv", skipinitialspace=True)
+df_hamming = pd.read_csv("h_bpass_windowed.csv", skipinitialspace=True)
 ax_hamming.plot(
     df_hamming["k"],
     df_hamming["hamming"],
@@ -49,7 +49,7 @@ ax_hamming.legend(
 #===================================================
  
 # --- magnitude vs bin index (k) ---
-ax_imp_resp.plot(
+ax_h.plot(
     df["k"],
     df["h_centered_real"],
     marker='o',
@@ -58,17 +58,17 @@ ax_imp_resp.plot(
     label='raw'
 )
 
-ax_imp_resp.set_xlabel("index (n)")
-ax_imp_resp.set_ylabel("Amplitude")
-ax_imp_resp.set_title("Filter impulse response")
-ax_imp_resp.grid(True)
-ax_imp_resp.xaxis.set_major_locator(MultipleLocator(2))
-ax_imp_resp.xaxis.set_minor_locator(MultipleLocator(1))
+ax_h.set_xlabel("index (n)")
+ax_h.set_ylabel("Amplitude")
+ax_h.set_title("Filter impulse response")
+ax_h.grid(True)
+ax_h.xaxis.set_major_locator(MultipleLocator(2))
+ax_h.xaxis.set_minor_locator(MultipleLocator(1))
 
-ax_y3 = ax_imp_resp.twinx()
+ax_y3 = ax_h.twinx()
 ax_y3.plot(
     df["k"],
-    df["h_win_Real"],
+    df["h_win_real"],
     marker='o',
     markersize=3,
     color='tab:red',
@@ -78,10 +78,10 @@ ax_y3.plot(
 #===================================================
 
 # Combine both legends
-lines1, labels1 = ax_imp_resp.get_legend_handles_labels()
+lines1, labels1 = ax_h.get_legend_handles_labels()
 lines2, labels2 = ax_y3.get_legend_handles_labels()
 
-ax_imp_resp.legend(
+ax_h.legend(
     lines1 + lines2,
     labels1 + labels2,
     loc='best'
@@ -90,21 +90,21 @@ ax_imp_resp.legend(
 ##############################################################################
  
 df = pd.read_csv("H.csv", skipinitialspace=True)
-ax_freq_resp.plot(df["k"], df["H_real"], 
+ax_H.plot(df["k"], df["H_real"], 
 	marker='o', 
 	markersize=3, 
 	linestyle='--', 
 	color='tab:orange',
 	label='not_centered')
-ax_freq_resp.set_xlabel("index [k]")
-ax_freq_resp.set_ylabel("Amplitude")
-ax_freq_resp.set_title("Freq response")
-ax_freq_resp.grid(True)
-ax_freq_resp.xaxis.set_major_locator(MultipleLocator(2))
-ax_freq_resp.xaxis.set_minor_locator(MultipleLocator(1))
+ax_H.set_xlabel("index [k]")
+ax_H.set_ylabel("Amplitude")
+ax_H.set_title("Freq response")
+ax_H.grid(True)
+ax_H.xaxis.set_major_locator(MultipleLocator(2))
+ax_H.xaxis.set_minor_locator(MultipleLocator(1))
  
 #Now the shifting dance
-ax_shifted = ax_freq_resp.twinx()
+ax_shifted = ax_H.twinx()
 raw_spectrum = df["H_real"]
 shifted_spectrum = []
 
@@ -122,10 +122,10 @@ ax_shifted.plot(
 )
 
 # Combine both legends
-lines1, labels1 = ax_freq_resp.get_legend_handles_labels()
+lines1, labels1 = ax_H.get_legend_handles_labels()
 lines2, labels2 = ax_shifted.get_legend_handles_labels()
 
-ax_freq_resp.legend(
+ax_H.legend(
     lines1 + lines2,
     labels1 + labels2,
     loc='best'

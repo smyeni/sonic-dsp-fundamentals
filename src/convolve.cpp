@@ -5,21 +5,22 @@
 #include <cstddef>
 #include <fstream>
 #include <sstream>
+#include "convolution.h"
 
 std::vector<std::complex<double>>
 			convolve(const std::vector<std::complex<double>>& x,
 					 const std::vector<std::complex<double>>& h)
 {
-    const std::size_t Nx = x.size();
+    const std::size_t Ns = x.size();
     const std::size_t Nh = h.size();
 
-    std::vector<std::complex<double>> y(Nx + Nh - 1);
+    std::vector<std::complex<double>> y(Ns + Nh - 1);
 
     for (std::size_t n = 0; n < y.size(); ++n)
     {
         for (std::size_t m = 0; m < Nh; ++m)
         {
-            if (n >= m && (n - m) < Nx)
+            if (n >= m && (n - m) < Ns)
             {
                 y[n] += h[m] * x[n - m];
             }
@@ -91,18 +92,20 @@ int main(const int argc, const char* argv[])
 {
     if (argc != 3) {
         std::println("Expected 2 inputs!!");
+        std::println("{} <signal_file.csv> <h_file.csv>", argv[0]);
         return 1;
 	}
 
-    const std::string x_filename = argv[1];
+    const std::string s_filename = argv[1];
     const std::string h_filename = argv[2];
 
-	auto x = read_signal(x_filename);
+	auto s = read_signal(s_filename);
 	auto h = read_filter(h_filename);
 
-	auto y = convolve(x, h);
+	//auto y = sonic::convolve(s, h);
+	auto y = convolve(s, h);
 
-    std::ofstream ofile("filtered_" + x_filename);
+    std::ofstream ofile("filtered_" + s_filename);
 	std::println( ofile, "{},{},{}", "n", "y_Real", "y_Imag" );
 	for (std::size_t n = 0; n < y.size(); ++n)
 	{

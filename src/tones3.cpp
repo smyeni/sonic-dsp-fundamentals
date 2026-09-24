@@ -1,26 +1,32 @@
 #include <cmath>
 #include <print>
-#include <array>
+#include <vector>
 #include <ranges>
 #include <cstdio>
 #include <numbers>
 #include <fstream>
 #include <algorithm>
 
-int main()
+int main( int argc, char* args[] )
 {
-	constexpr size_t N = 64; //64 = 2^6
+    if (argc < 3)
+    {
+        std::println( "Usage: {} <N> <outfile>", args[0] );
+        return -1;
+    }
 
-	std::array<double,N> x1{0};
-	std::array<double,N> x2{0};
-	std::array<double,N> x3{0};
-	std::array<double,N> sig_raw{0};
-	std::array<double,N> hamming{0};
-	std::array<double,N> sig_windowed{0};
+	const size_t N = std::stoul( args[1] );
 
-	std::array<double,N> phase1{0};
-	std::array<double,N> phase2{0};
-	std::array<double,N> phase3{0};
+	std::vector<double> x1(N,0);
+	std::vector<double> x2(N,0);
+	std::vector<double> x3(N,0);
+	std::vector<double> sig_raw(N,0);
+	std::vector<double> hamming(N,0);
+	std::vector<double> sig_windowed(N,0);
+
+	std::vector<double> phase1(N,0);
+	std::vector<double> phase2(N,0);
+	std::vector<double> phase3(N,0);
 
 	const double f1_signal = 500;   //500Hz
 	const double f2_signal = 1500;  //1.5kHz
@@ -58,7 +64,7 @@ int main()
     }
 
 
-	const std::string filename("tones3.csv");
+	const std::string filename( args[2]);
 
 	{
 		std::ofstream file{ filename };

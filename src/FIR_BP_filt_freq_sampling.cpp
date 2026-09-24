@@ -8,6 +8,8 @@
 #include <print>
 #include <ranges>
 #include <vector>
+#include <cstdio>
+#include <string>
 
 using Complex = std::complex<double>;
 using CVec    = std::vector<Complex>;
@@ -48,7 +50,7 @@ std::vector<double> hamming(std::size_t N)
 int main(int argc, char* argv[])
 {
     if (argc < 2) {
-        std::println(stderr, "Usage: {} <N>", argv[0]);
+        std::println(stderr, "Usage: {} <N> <cutoff_Hz>", argv[0]);
         return 1;
     }
 
@@ -58,13 +60,34 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+    const double Fs = 8000; //Sampling freq
+
     // --------------------------------------------------------------
     // 1. Ideal frequency response  (high-pass style, same as yours)
     // --------------------------------------------------------------
     CVec H(N, 0.0);
-    for (std::size_t k = 0; k < 7;      ++k) H[k] = 1.0;   // low-side pass
-    for (std::size_t k = 58; k < N;      ++k) H[k] = 1.0;   // high-side pass
+    double cutoff = std::stoul( argv[2] );
+    double bin_sep = Fs/N;
+    std::size_t n_cutoff = static_cast<std::size_t>(cutoff/bin_sep);
+    std::println("Cutof: {}", cutoff);
+    std::println("Num_cutoff_intervals: {}", n_cutoff);
+
+    //for (std::size_t k = 0; k < 7; ++k) {
+    for (std::size_t k = 0; k < n_cutoff; ++k) 
+    {
+        H[k] = 1.0;   // low-side pass
+    }
+
+    //for (std::size_t k = 58; k < N;      ++k) {
+    //for (std::size_ k = 116; k < N;      ++k) {
+    for (std::size_t k = N-n_cutoff; k < N; ++k) 
+    {
+        H[k] = 1.0;   // high-side pass
+    }
+    std::println("BW bounds: {} and {}",n_cutoff, N-n_cutoff);
+
     // bins 7 … 57 remain 0 → stop-band
+    // bins 14 … 116 remain 0 → stop-band
 
     // --------------------------------------------------------------
     // 2. IDFT → impulse response
@@ -122,7 +145,23 @@ int main(int argc, char* argv[])
     // --------------------------------------------------------------
     // 7. Launch the plotter (same as before)
     // --------------------------------------------------------------
-    std::system("python3 plot_idft.py &");
+    FILE* pipe = popen("find $HOME -name 'plot_FIR_filt.py' -print", "r");
+
+    if (!pipe)
+        return 1;
+
+    char buffer[256];
+    std::string result;
+
+    while (fgets(buffer, sizeof(buffer), pipe))
+        result += buffer;
+
+    pclose(pipe);
+
+    //std::system("python3 plot_FIR.py &");
+	result.erase(result.find_last_not_of("\n\r") + 1);
+	std::string command = "python3 \"" + result + "\"";
+	std::system(command.c_str());
 
     std::println("Done.  Wrote h.csv, H.csv, h_windowed.csv");
     return 0;

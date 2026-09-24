@@ -1,13 +1,27 @@
+import sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
 
+from pathlib import Path 
+import pandas as pd 
+
+
+if len(sys.argv) != 2: 
+    print(f"Usage: {Path(sys.argv[0]).name} <csv-file>") 
+    sys.exit(1) 
+
+csv_file = Path(sys.argv[1]) 
+if not csv_file.is_file(): 
+    print(f"Error: file not found: {csv_file}") 
+    sys.exit(1)
+
 # Load the filtered output
-df = pd.read_csv("filtered_tones3.csv", header=0, names=["n", "y", "col3"])
+df = pd.read_csv( csv_file, header=0, names=["n", "y_Real"] )
 
 # Grab the steady-state window: n = 32 to 47 (16 samples, one full period)
-window = df[(df["n"] >= 32) & (df["n"] <= 47)]["y"].to_numpy()
+window = df[(df["n"] >= 32) & (df["n"] <= 47)]["y_Real"].to_numpy()
 
 print("Window samples:")
 print(window)

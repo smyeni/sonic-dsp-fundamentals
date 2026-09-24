@@ -18,8 +18,8 @@ with open( csv_file, newline="" ) as f:
     reader = csv.DictReader(f, skipinitialspace=True)
 
     for row in reader:
-        n.append(float(row["n"]))
-        amplitude.append(float(row["y_Real"]))
+        n.append(float(row["k"]))
+        amplitude.append(float(row["h_real"]))
 
 fig, ax = plt.subplots()
 ax.plot(n, amplitude, marker="o")

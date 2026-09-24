@@ -1,18 +1,28 @@
 #include <cmath>
 #include <print>
-#include <array>
+#include <vector>
 #include <ranges>
 #include <numbers>
 #include <fstream>
 #include <algorithm>
 
-int main()
+int main( int argc, char* argv[] )
 {
-	constexpr size_t N = 128; //64 = 2^6
-	std::array<float,N> x{0};
-	std::array<float,N> x_win{0};
-	std::array<float,N> phase{0};
-	std::array<float,N> hann{0};
+    if (argc < 2) {
+        std::println(stderr, "Usage: {} <N>", argv[0]);
+        return 1;
+    }
+
+    const std::size_t N = std::stoul(argv[1]);
+    if (N < 8 || (N & 1)) {                     // keep even for clean centre
+        std::println(stderr, "N should be even and ≥ 8");
+        return 1;
+    }
+
+	std::vector<float> x(N);
+	std::vector<float> x_win(N);
+	std::vector<float> phase(N);
+	std::vector<float> hann(N);
 
 	const float f_signal = 10000; //10kHz
 	const float F_s = 10*f_signal;

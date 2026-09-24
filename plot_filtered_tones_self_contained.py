@@ -6,15 +6,15 @@ Fs = 8000
 
 # --- Load the FILTERED output ---
 df = pd.read_csv("filtered_tones3.csv", header=0, names=["n", "y", "col3"])
-window = df[(df["n"] >= 32) & (df["n"] <= 47)]["y"].to_numpy()
+data_window = df[(df["n"] >= 32) & (df["n"] <= 47)]["y"].to_numpy()
 
-print("Filtered window samples:")
-print(window)
-print(f"Window length: {len(window)}")
+print("Filtered data_window samples:")
+print(data_window)
+print(f"Window length: {len(data_window)}")
 
-N = len(window)
+N = len(data_window)
 freqs = np.fft.fftfreq(N, d=1/Fs)
-Y = np.fft.fft(window)
+Y = np.fft.fft(data_window)
 
 print("\nBin | Freq (Hz) | Magnitude | Phase (rad)")
 for k in range(N):
@@ -29,16 +29,19 @@ for k, f in [(1, 500), (3, 1500), (6, 3000)]:
 df_orig = pd.read_csv(
     "tones3.csv",
     header=0,
-    names=["n", "x", "phase1", "phase2", "phase3", "x1", "x2", "x3"]
+    names=["n", "x", "x_windowed", "phase1", "phase2", "phase3", "x1", "x2", "x3"]
 )
+print(df_orig.head())
+print(df_orig["n"].min(), df_orig["n"].max(), len(df_orig))
+
 df_orig["n"] = pd.to_numeric(df_orig["n"], errors="coerce")
 df_orig["x"] = pd.to_numeric(df_orig["x"], errors="coerce")
 df_orig = df_orig.dropna(subset=["n", "x"])
 
-window_orig = df_orig[(df_orig["n"] >= 32) & (df_orig["n"] <= 47)]["x"].to_numpy()
-print(f"Original window length: {len(window_orig)}")  # sanity check — should print 16
+data_window_orig = df_orig[(df_orig["n"] >= 32) & (df_orig["n"] <= 47)]["x"].to_numpy()
+print(f"Original window length: {len(data_window_orig)}")  # sanity check — should print 16
 
-X = np.fft.fft(window_orig)
+X = np.fft.fft(data_window_orig)
 
 print("\n--- Original tone bins ---")
 for k, f in [(1, 500), (3, 1500), (6, 3000)]:
