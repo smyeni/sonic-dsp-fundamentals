@@ -62,14 +62,14 @@ int main()
 
     const double bin_hz = f_sampling/N_samples;
     const double bin_delta_omega = 2 * std::numbers::pi / N_samples;
-    std::vector<double> bin_omegas(N_samples);
+    std::vector<double> trial_bin_omegas(N_samples);
 
     //phase chasers
     for (int k=0; k < N_samples; k++)
     {
-        bin_omegas[k] = k*bin_delta_omega;
+        trial_bin_omegas[k] = k*bin_delta_omega;
     }
-    std::println("Number of bin freqs: {}", bin_omegas.size());
+    std::println("Number of bin freqs: {}", trial_bin_omegas.size());
 
     std::ofstream outfile{"spectrum.csv"};
     outfile.imbue(std::locale::classic());
@@ -81,11 +81,14 @@ int main()
     double phase_hann;
 
 	//Hold tight, voodoo happening here
-    for (auto [k,bin_omega] : std::views::enumerate(bin_omegas))
+    for (auto [k,trial_omega] : std::views::enumerate(trial_bin_omegas))
     {
         //this angle gets bigger & bigger sweep by sweep
-        const std::complex<double> inter_sample_phase_advance( std::cos(bin_omega), std::sin(bin_omega) ); 
+        //const std::complex<double> inter_sample_phase_advance( std::cos(trial_omega), std::sin(trial_omega) ); 
+        //auto inter_sample_phase_advance = std::polar(1.0, trial_omega);
+        std::complex<double> inter_sample_phase_advance = std::polar(1.0, trial_omega);
 
+        //Reset these for new bin score calculation
         std::complex<double> phase_reverser(1, 0);
         std::complex<double> X_omega_hann(0.0, 0.0);
         std::complex<double> X_omega_raw(0.0, 0.0);
@@ -108,6 +111,6 @@ int main()
         magn_raw = std::abs(X_omega_raw);
         phase_hann = std::arg(X_omega_hann);
         phase_raw = std::arg(X_omega_raw);
-        std::println(outfile, "{},{:.6e},{},{:.6e},{:.6e},{:.6e},{:.6e}",k, bin_omega, k*bin_hz, magn_hann, phase_raw, phase_hann, magn_raw);
+        std::println(outfile, "{},{:.6e},{},{:.6e},{:.6e},{:.6e},{:.6e}",k, trial_omega, k*bin_hz, magn_hann, phase_raw, phase_hann, magn_raw);
     }
 }
