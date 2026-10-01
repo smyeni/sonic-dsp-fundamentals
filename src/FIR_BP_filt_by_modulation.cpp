@@ -23,11 +23,14 @@ CVec idft(const CVec& H)
     const std::size_t N = H.size();
     CVec h(N);
 
-    for (std::size_t n = 0; n < N; ++n) {
+    for (std::size_t n = 0; n < N; ++n) 
+    {
         Complex sum{};
-        for (std::size_t k = 0; k < N; ++k) {
-            const double θ = 2.0 * std::numbers::pi * static_cast<double>(k * n) / N;
-            sum += H[k] * std::exp(Complex{0.0, θ});
+        for (std::size_t k = 0; k < N; ++k) 
+        {
+            //const double theta = 2.0 * std::numbers::pi * static_cast<double>(k * n) / N;
+            const double theta = 2.0 * std::numbers::pi_v<double> * static_cast<double>(k) * static_cast<double>(n) / static_cast<double>(N);
+            sum += H[k] * std::exp(Complex{0.0, theta});
         }
         h[n] = sum / static_cast<double>(N);
     }

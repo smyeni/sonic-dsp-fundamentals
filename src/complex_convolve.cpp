@@ -8,7 +8,7 @@
 #include "convolution.h"
 
 std::vector<std::complex<double>>
-			convolve(const std::vector<std::complex<double>>& x,
+			complex_convolve(const std::vector<std::complex<double>>& x,
 					 const std::vector<std::complex<double>>& h)
 {
     const std::size_t Ns = x.size();
@@ -102,8 +102,8 @@ int main(const int argc, const char* argv[])
 	auto s = read_signal(s_filename);
 	auto h = read_filter(h_filename);
 
-	//auto y = sonic::convolve(s, h);
-	auto y = convolve(s, h);
+	//auto y = sonic::complex_convolve(s, h);
+	auto y = complex_convolve(s, h);
 
     std::ofstream ofile("filtered_" + s_filename);
 	std::println( ofile, "{},{},{}", "n", "y_Real", "y_Imag" );
